@@ -1,0 +1,9 @@
+---
+#dkim_trusted_hosts: "127.0.0.1"
+
+dkim_port: "{{ dkim_default_port }}"
+
+dkim_domains: []
+# - domain.com
+# - anotherdomain.org
+ 
