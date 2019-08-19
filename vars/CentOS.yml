@@ -1,0 +1,11 @@
+---
+dkim_pkgs:
+  - opendkim
+
+opendkim_genkey: "/usr/sbin/opendkim-genkey"
+
+dkim_default_port: 8891
+dkim_socket: "inet:{{ dkim_port }}@localhost"
+dkim_user: "{% if ansible_lsb.major_release|int < 7%}root{% else %}opendkim{% endif %}"
+
+
