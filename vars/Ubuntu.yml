@@ -1,0 +1,11 @@
+
+
+dkim_default_port: 8891
+dkim_pkgs:
+  - opendkim-tools
+  - opendkim
+
+dkim_user: opendkim
+
+dkim_socket: "inet:{{ dkim_default_port }}@127.0.0.1"
+dkim_genkey: "opendkim-genkey"

@@ -3,75 +3,74 @@
   include_vars: "{{ ansible_distribution }}.yml"
 
 - name: Install the packages
-  package: 
-      name: "{{ dkim_pkgs }}"
-      state: present
+  package:
+    name: "{{ dkim_pkgs }}"
+    state: present
 
 - name: Copy opendkim.conf
-  template: 
-      src: opendkim.conf.j2
-      dest: /etc/opendkim.conf
-      owner: root
-      group: root
-      mode: "0644"
-      backup: yes
+  template:
+    src: opendkim.conf.j2
+    dest: /etc/opendkim.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: yes
 
 - name: Copy default file
-  template: 
-      src: opendkim.j2
-      dest: /etc/default/opendkim
-      backup: yes
+  template:
+    src: opendkim.j2
+    dest: /etc/default/opendkim
+    backup: yes
   when: ansible_os_family == "Debian"
 
 - name: Ensure directories for OpenDKIM are in place
-  file: 
-      name: "{{ item }}"
-      state: directory
-      owner: root
-      group: root
-      mode: "0755"
+  file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
   loop:
     - /etc/opendkim
     - /etc/opendkim/keys
 
-# default only localhost and 127.0.0.1, it is possible to add variable dkim_trusted_hosts to host_vars directory
 - name: Ensure configuration is in place
-  template: 
-      src: "{{ item }}".j2
-      dest: "/etc/opendkim/{{ item }}"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/opendkim/{{ item }}"
   notify: reload opendkim
-  loop: 
+  loop:
     - "TrustedHosts"
     - "SigningTable"
     - "KeyTable"
- 
+
 - name: Create directory for every key
-  file: 
-      name: "/etc/opendkim/keys/{{ item }}"
-      state: directory
-      owner: root
-      group: root
-      mode: "0755"
+  file:
+    name: "/etc/opendkim/keys/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
   loop: '{{ dkim_domains }}'
 
 # idempotent, but shell, so it says changed every time
 - name: Generate key for domain if it do not exists
-  shell: "{{ opendkim_genkey }} -r -d {{ item }} -D /etc/opendkim/keys/{{ item }}/"
-  args: 
-      creates: /etc/opendkim/keys/{{ item }}/default.private 
+  shell: "{{ dkim_genkey }} -r -d {{ item }} -D /etc/opendkim/keys/{{ item }}/"
+  args:
+    creates: /etc/opendkim/keys/{{ item }}/default.private
   loop: '{{ dkim_domains }}'
 
 - name: Ensure private key is readable only by appropriate user
-  file: 
-      name: "/etc/opendkim/keys/{{ item }}/default.private"
-      owner: "{{ dkim_user }}"
-      group: "{{ dkim_user }}"
-      mode: "0600"
+  file:
+    name: "/etc/opendkim/keys/{{ item }}/default.private"
+    owner: "{{ dkim_user }}"
+    group: "{{ dkim_user }}"
+    mode: "0600"
   loop: "{{ dkim_domains }}"
 
 - name: Set OpenDKIM to start after boot
-  service: 
-      name: opendkim
-      state: started
-      enabled: yes
+  service:
+    name: opendkim
+    state: started
+    enabled: yes
 
