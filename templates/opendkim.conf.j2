@@ -22,6 +22,18 @@ UserID {{ dkim_user }}:{{ dkim_user }}
 Socket {{ dkim_socket }}
 {% endif %}
 
+{% if ansible_distribution == "Ubuntu" %}
+# TODO: Evaluate if this is needed for Debian/RedHat too and what is proper path to pid file there.
+##  PidFile filename
+###      default (none)
+###
+###  Name of the file where the filter should write its pid before beginning
+###  normal operations.
+#
+PidFile               /var/run/opendkim/opendkim.pid
+{% endif %}
+
+
 # Commonly-used options; the commented-out versions show the defaults.
 #Canonicalization	simple
 Mode			sv
