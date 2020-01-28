@@ -1,5 +1,5 @@
 ---
-opendkim_genkey: "{% if ansible_lsb.major_release|int == 6 %}'/usr/sbin/opendkim-genkey'{% else %}'/usr/sbin/opendkim-genkey'{% endif %}"
+dkim_genkey: "{% if ansible_lsb.major_release|int == 6 %}'/usr/sbin/opendkim-genkey'{% else %}'/usr/sbin/opendkim-genkey'{% endif %}"
 
 dkim_pkgs: "{% if ansible_lsb.major_release|int == 6 %}['opendkim']{% else %}['opendkim','opendkim-tools']{% endif %}" 
 
