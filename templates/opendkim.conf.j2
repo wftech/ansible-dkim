@@ -18,7 +18,7 @@ UMask			002
 # Set the user and group to opendkim user
 UserID {{ dkim_user }}:{{ dkim_user }}
 
-{% if ansible_os_family == "RedHat" or ansible_distribution == "Ubuntu" %}# Create a socket through which your MTA can communicate.
+{% if ansible_os_family == "RedHat" %}# Create a socket through which your MTA can communicate.
 Socket {{ dkim_socket }}
 {% endif %}
 
