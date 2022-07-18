@@ -3,7 +3,10 @@
 
 dkim_port: "{{ dkim_default_port }}"
 
+# default selector to be used, when no selector defined
+dkim_default_selector: 'default'
+
 dkim_domains: []
-# - domain.com
-# - anotherdomain.org
- 
+# - { 'domain': 'domain.com' } # no selector defined, dkim_default_selector will be used
+# - { 'domain': 'anotherdomain.org', 'selector': '202208' }
+

@@ -46,23 +46,23 @@
 
 - name: Create directory for every key
   file:
-    name: "/etc/opendkim/keys/{{ item }}"
+    name: "/etc/opendkim/keys/{{ item.domain }}"
     state: directory
     owner: root
     group: root
     mode: "0755"
-  loop: '{{ dkim_domains }}'
+  loop: "{{ dkim_domains }}"
 
 # idempotent, but shell, so it says changed every time
 - name: Generate key for domain if it do not exists
-  shell: "{{ dkim_genkey }} -r -d {{ item }} -D /etc/opendkim/keys/{{ item }}/"
+  shell: "{{ dkim_genkey }} -r -d {{ item.domain }} -D /etc/opendkim/keys/{{ item.domain }}/ -s {{ item.selector|default(dkim_default_selector) }} " 
   args:
-    creates: /etc/opendkim/keys/{{ item }}/default.private
+    creates: /etc/opendkim/keys/{{ item.domain }}/{{ item.selector|default(dkim_default_selector) }}.private
   loop: '{{ dkim_domains }}'
 
 - name: Ensure private key is readable only by appropriate user
   file:
-    name: "/etc/opendkim/keys/{{ item }}/default.private"
+    name: "/etc/opendkim/keys/{{ item.domain }}/{{ item.selector|default(dkim_default_selector) }}.private"
     owner: "{{ dkim_user }}"
     group: "{{ dkim_user }}"
     mode: "0600"
